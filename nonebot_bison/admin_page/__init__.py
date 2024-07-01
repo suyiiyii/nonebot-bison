@@ -2,6 +2,7 @@ import os
 from pathlib import Path
 from typing import TYPE_CHECKING
 
+import nonebot
 from nonebot.log import logger
 from nonebot.rule import to_me
 from nonebot.typing import T_State
@@ -9,6 +10,7 @@ from nonebot import get_driver, on_command
 from nonebot.adapters.onebot.v11 import Bot
 from nonebot.adapters.onebot.v11.event import PrivateMessageEvent
 
+from .api import get_admin_groups
 from .api import router as api_router
 from ..plugin_config import plugin_config
 from .token_manager import token_manager as tm
@@ -65,6 +67,11 @@ def register_get_token_handler():
 
     @get_token.handle()
     async def send_token(bot: "Bot", event: PrivateMessageEvent, state: T_State):
+        qq = event.sender.user_id
+        if qq and str(qq) not in nonebot.get_driver().config.superusers and len(await get_admin_groups(int(qq))) == 0:
+            await get_token.finish("没有可以管理的群组")
+            return
+
         token = tm.get_user_token((event.get_user_id(), event.sender.nickname))
         await get_token.finish(f"请访问: {plugin_config.outer_url / 'auth' / token}")
 
