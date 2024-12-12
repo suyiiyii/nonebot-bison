@@ -12,7 +12,7 @@ from nonebot.adapters.onebot.v11.event import PrivateMessageEvent
 from .api import router as api_router
 from ..plugin_config import plugin_config
 from .token_manager import token_manager as tm
-from .api import metrics_router as metrics_router
+from ..metrics import metrics_router as metrics_router
 
 if TYPE_CHECKING:
     from nonebot.drivers.fastapi import Driver
